@@ -6,15 +6,40 @@ import stormGlassWeather3hoursNormalized from '@test/fixtures/stormglass_weather
 jest.mock('axios');
 
 describe('StormGlass Client', () => {
+  const mockedAxios = axios as jest.Mocked<typeof axios>;
+
   it('should return the normalized forecast from the StormGlass service', async () => {
     const lat = -33.792726;
     const lng = 151.289824;
 
-    const mockedAxios = axios as jest.Mocked<typeof axios>;
     mockedAxios.get.mockResolvedValue({ data: stormGlassWeather3hours });
 
     const stormGlass = new StormGlass(mockedAxios);
     const response = await stormGlass.fetchPoints(lat, lng);
     expect(response).toEqual(stormGlassWeather3hoursNormalized);
+  });
+
+  it('should ignore points with incompleted data coming from StormGlass service', async () => {
+    const lat = -33.792726;
+    const lng = 151.289824;
+
+    mockedAxios.get.mockResolvedValue({
+      data: {
+        hours: [
+          ...stormGlassWeather3hours.hours,
+          // adding an incompleted response
+          {
+            waveHeight: {
+              noaa: 300,
+            },
+            time: 'time',
+          },
+        ],
+      },
+    });
+
+    const stormGlass = new StormGlass(mockedAxios);
+    const response = await stormGlass.fetchPoints(lat, lng);
+    expect(response.length).toBe(stormGlassWeather3hours.hours.length);
   });
 });
