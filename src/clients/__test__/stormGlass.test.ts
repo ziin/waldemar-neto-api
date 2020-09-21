@@ -2,7 +2,6 @@ import { StormGlass } from '@src/clients/stormGlass';
 import axios from 'axios';
 import stormGlassWeather3hours from '@test/fixtures/stormglass_weather_3_hours.json';
 import stormGlassWeather3hoursNormalized from '@test/fixtures/stormglass_weather_3_hours_normalized.json';
-import { EPROTONOSUPPORT } from 'constants';
 
 jest.mock('axios');
 

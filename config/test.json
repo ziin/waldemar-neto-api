@@ -1,0 +1,9 @@
+{
+  "app": {
+    "resources": {
+      "stormglass": {
+        "apiToken": "test_api_token"
+      }
+    }
+  }
+}
