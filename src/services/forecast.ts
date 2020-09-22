@@ -15,8 +15,13 @@ export interface Beach {
   user: 'some-id';
 }
 
-export interface ForecastResponse extends ForecastPoint, Omit<Beach, 'user'> {
+export interface BeachForecast extends ForecastPoint, Omit<Beach, 'user'> {
   rating: number;
+}
+
+export interface TimeForecast {
+  time: string;
+  forecast: BeachForecast[];
 }
 
 export class Forecast {
@@ -24,8 +29,8 @@ export class Forecast {
 
   public async processForecastForBeaches(
     beaches: Beach[]
-  ): Promise<ForecastResponse[]> {
-    const forecastResponses: ForecastResponse[] = [];
+  ): Promise<TimeForecast[]> {
+    const forecastResponses: BeachForecast[] = [];
     for (const beach of beaches) {
       /* eslint-disable @typescript-eslint/no-unused-vars */
       const { user, ...beachWithoutUser } = beach;
@@ -38,6 +43,19 @@ export class Forecast {
         }))
       );
     }
-    return forecastResponses;
+    return this.mapToTimeForecast(forecastResponses);
+  }
+
+  private mapToTimeForecast(beachForecast: BeachForecast[]): TimeForecast[] {
+    const timeForecasts: TimeForecast[] = [];
+    for (const point of beachForecast) {
+      const timePoint = timeForecasts.find((f) => f.time === point.time);
+      if (timePoint) {
+        timePoint.forecast.push(point);
+      } else {
+        timeForecasts.push({ time: point.time, forecast: [point] });
+      }
+    }
+    return timeForecasts;
   }
 }
