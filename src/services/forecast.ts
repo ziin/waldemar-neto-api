@@ -38,23 +38,30 @@ export class Forecast {
     beaches: Beach[]
   ): Promise<TimeForecast[]> {
     try {
-      const forecastResponses: BeachForecast[] = [];
+      const beachForecasts: BeachForecast[] = [];
       for (const beach of beaches) {
-        /* eslint-disable @typescript-eslint/no-unused-vars */
-        const { user, ...beachWithoutUser } = beach;
         const points = await this.stormGlass.fetchPoints(beach.lat, beach.lng);
-        forecastResponses.push(
-          ...points.map((point) => ({
-            ...beachWithoutUser,
-            rating: 1,
-            ...point,
-          }))
-        );
+        beachForecasts.push(...this.createBeachForecasts(beach, points));
       }
-      return this.mapToTimeForecast(forecastResponses);
+      return this.mapToTimeForecast(beachForecasts);
     } catch (error) {
       throw new ForecastProcessingError(error.message);
     }
+  }
+
+  private createBeachForecasts(
+    beach: Beach,
+    points: ForecastPoint[]
+  ): BeachForecast[] {
+    /* eslint-disable @typescript-eslint/no-unused-vars */
+    const { user, ...beachWithoutUser } = beach;
+    return [
+      ...points.map((point) => ({
+        ...beachWithoutUser,
+        rating: 1,
+        ...point,
+      })),
+    ];
   }
 
   private mapToTimeForecast(beachForecast: BeachForecast[]): TimeForecast[] {
