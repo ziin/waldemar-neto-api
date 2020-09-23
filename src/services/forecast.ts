@@ -1,22 +1,8 @@
 import { ForecastPoint, StormGlass } from '../clients/stormGlass';
+import { Beach } from '../models/beach';
 import { InternalError } from '../utils/errors/internal-error';
 
-export enum BeachPosition {
-  N = 'N',
-  E = 'E',
-  S = 'S',
-  W = 'W',
-}
-
-export interface Beach {
-  lat: number;
-  lng: number;
-  name: string;
-  position: BeachPosition;
-  user: 'some-id';
-}
-
-export interface BeachForecast extends ForecastPoint, Omit<Beach, 'user'> {
+export interface BeachForecast extends ForecastPoint, Beach {
   rating: number;
 }
 
@@ -53,11 +39,9 @@ export class Forecast {
     beach: Beach,
     points: ForecastPoint[]
   ): BeachForecast[] {
-    /* eslint-disable @typescript-eslint/no-unused-vars */
-    const { user, ...beachWithoutUser } = beach;
     return [
       ...points.map((point) => ({
-        ...beachWithoutUser,
+        ...beach,
         rating: 1,
         ...point,
       })),
