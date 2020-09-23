@@ -5,6 +5,9 @@
         "apiUrl": "https://api.stormglass.io/v2/",
         "apiToken": "do_not_hard_code_it"
       }
+    },
+    "database": {
+      "mongoUrl": "mongodb://localhost:27017/waldemar-neto-api"
     }
   }
 }
