@@ -4,6 +4,9 @@
       "stormglass": {
         "apiToken": "test_api_token"
       }
+    },
+    "database": {
+      "mongoUrl": "mongodb://localhost:27017/waldemar-neto-api:test"
     }
   }
 }
