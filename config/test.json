@@ -1,5 +1,6 @@
 {
   "app": {
+    "port": 3000,
     "resources": {
       "stormglass": {
         "apiToken": "test_api_token"
