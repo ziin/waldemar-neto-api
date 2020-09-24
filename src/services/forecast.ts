@@ -39,9 +39,13 @@ export class Forecast {
     beach: Beach,
     points: ForecastPoint[]
   ): BeachForecast[] {
+    const { lat, lng, position, name } = beach;
     return [
       ...points.map((point) => ({
-        ...beach,
+        name,
+        position,
+        lat,
+        lng,
         rating: 1,
         ...point,
       })),
