@@ -1,6 +1,10 @@
 {
   "app": {
     "port": 3000,
+    "auth": {
+      "access_secret": "replace-it",
+      "access_expire": "1h"
+    },
     "resources": {
       "stormglass": {
         "apiUrl": "https://api.stormglass.io/v2",

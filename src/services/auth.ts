@@ -1,4 +1,7 @@
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+import config from 'config';
+import { User } from '@src/models/user';
 
 export default class AuthService {
   static hashPassword = async function (
@@ -13,5 +16,14 @@ export default class AuthService {
     hashPassword: string
   ): Promise<boolean> {
     return await bcrypt.compare(password, hashPassword);
+  };
+
+  static generateToken = function (payload: Partial<User>): string {
+    const { access_secret, access_expire } = config.get('app.auth');
+    const token = jwt.sign(payload, access_secret, {
+      expiresIn: access_expire,
+    });
+
+    return token;
   };
 }

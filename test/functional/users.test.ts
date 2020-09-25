@@ -59,4 +59,53 @@ describe('Users functional tests', () => {
       });
     });
   });
+
+  describe('When authenticate a user', () => {
+    it('should authenticate an user with success', async () => {
+      const newUser: User = {
+        name: 'Authentication Test',
+        email: 'auth@mail.com',
+        password: 'pass123',
+      };
+
+      const user = await User.create(newUser);
+
+      const { body, status } = await global.testRequest
+        .post('/users/authenticate')
+        .send({ email: user.email, password: newUser.password });
+
+      expect(status).toBe(200);
+      expect(body).toEqual({ token: expect.any(String) });
+    });
+
+    it('should return 401 (unauthorized) when user not found', async () => {
+      const user: User = {
+        name: 'Not found user',
+        email: 'doesntexist@mail.com',
+        password: 'pass123',
+      };
+
+      const { body, status } = await global.testRequest
+        .post('/users/authenticate')
+        .send({ email: user.email, password: user.password });
+
+      expect(status).toBe(401);
+      expect(body).toEqual({ code: 401, error: 'User not found' });
+    });
+
+    it('should return 401 (unauthorized) when password is incorrect', async () => {
+      const user = await User.create({
+        name: 'Password Test',
+        email: 'wrongpass@mail.com',
+        password: 'pass123',
+      });
+
+      const { body, status } = await global.testRequest
+        .post('/users/authenticate')
+        .send({ email: user.email, password: 'wrong_pass' });
+
+      expect(status).toBe(401);
+      expect(body).toEqual({ code: 401, error: 'Wrong password' });
+    });
+  });
 });
