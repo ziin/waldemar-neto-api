@@ -2,7 +2,7 @@ import { ForecastPoint, StormGlass } from '../clients/stormGlass';
 import { Beach } from '../models/beach';
 import { InternalError } from '../utils/errors/internal-error';
 
-export interface BeachForecast extends ForecastPoint, Beach {
+export interface BeachForecast extends ForecastPoint, Omit<Beach, 'user'> {
   rating: number;
 }
 
