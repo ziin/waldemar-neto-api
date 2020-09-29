@@ -13,6 +13,10 @@
     },
     "database": {
       "mongoUrl": "mongodb://localhost:27017/waldemar-neto-api"
+    },
+    "logger": {
+      "enabled": true,
+      "level": "info"
     }
   }
 }

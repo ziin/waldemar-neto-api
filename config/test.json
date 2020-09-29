@@ -12,6 +12,9 @@
     },
     "database": {
       "mongoUrl": "mongodb://localhost:27017/waldemar-neto-api:test"
+    },
+    "logger": {
+      "enabled": false
     }
   }
 }

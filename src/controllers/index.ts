@@ -1,5 +1,6 @@
 import { Response } from 'express';
 import mongoose from 'mongoose';
+import logger from '@src/logger';
 import { CustomValidationErrorTypes } from '../models/user';
 
 export abstract class BaseController {
@@ -13,6 +14,7 @@ export abstract class BaseController {
         .status(validationError.code)
         .send({ code: validationError.code, error: validationError.error });
     } else {
+      logger.error(error);
       res.status(500).send({ error: 'Internal Error' });
     }
   }
