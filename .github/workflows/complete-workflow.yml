@@ -1,5 +1,3 @@
-# Configs
-
 name: Complete workflow
 
 on: ['push']
