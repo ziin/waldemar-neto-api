@@ -3,7 +3,6 @@ import { Request, Response } from 'express';
 import { User } from '@src/models/user';
 import { BaseController } from '.';
 import AuthService from '@src/services/auth';
-import logger from '@src/logger';
 
 @Controller('users')
 export class UsersController extends BaseController {
@@ -19,25 +18,26 @@ export class UsersController extends BaseController {
 
   @Post('authenticate')
   public async authenticate(req: Request, res: Response): Promise<void> {
-    try {
-      const { email, password } = req.body;
-      const user = await User.findOne({ email });
-      if (!user) {
-        res.status(401).send({ code: 401, error: 'User not found' });
-        return;
-      }
-
-      if (!(await AuthService.checkPassword(password, user.password))) {
-        res.status(401).send({ code: 401, error: 'Wrong password' });
-        return;
-      }
-
-      const token = AuthService.generateToken(user.toJSON());
-
-      res.status(200).send({ token });
-    } catch (error) {
-      logger.error(error);
-      res.status(500).send({ error: error.message });
+    const { email, password } = req.body;
+    const user = await User.findOne({ email });
+    if (!user) {
+      this.sendErrorResponse(res, {
+        code: 401,
+        message: 'User not found',
+      });
+      return;
     }
+
+    if (!(await AuthService.checkPassword(password, user.password))) {
+      this.sendErrorResponse(res, {
+        code: 401,
+        message: 'Wrong password',
+      });
+      return;
+    }
+
+    const token = AuthService.generateToken(user.toJSON());
+
+    res.status(200).send({ token });
   }
 }

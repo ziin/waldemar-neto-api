@@ -2,6 +2,7 @@ import { Response } from 'express';
 import mongoose from 'mongoose';
 import logger from '@src/logger';
 import { CustomValidationErrorTypes } from '../models/user';
+import ApiError, { APIError } from '../utils/errors/ApiError';
 
 export abstract class BaseController {
   protected handleCreateAndUpdateErrors(
@@ -10,12 +11,16 @@ export abstract class BaseController {
   ): void {
     if (error instanceof mongoose.Error.ValidationError) {
       const validationError = this.handleValidationError(error);
-      res
-        .status(validationError.code)
-        .send({ code: validationError.code, error: validationError.error });
+      this.sendErrorResponse(res, {
+        code: validationError.code,
+        message: validationError.error,
+      });
     } else {
       logger.error(error);
-      res.status(500).send({ error: 'Internal Error' });
+      this.sendErrorResponse(res, {
+        code: 500,
+        message: 'Something went error',
+      });
     }
   }
 
@@ -31,4 +36,8 @@ export abstract class BaseController {
     return Object.values(error.errors).filter((error) => error.kind === kind)
       .length;
   }
+
+  protected sendErrorResponse = (res: Response, error: APIError): Response => {
+    return res.status(error.code).send(ApiError.format(error));
+  };
 }
