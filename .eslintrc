@@ -9,6 +9,9 @@
     "prettier"
   ],
   "ignorePatterns": "jest.config.js",
+  "env": {
+    "jest": true
+  },
   "rules": {
     "no-console": "warn"
   }
