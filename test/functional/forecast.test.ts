@@ -1,4 +1,4 @@
-import { Beach, BeachPosition } from '@src/models/beach';
+import { Beach, GeoPosition } from '@src/models/beach';
 import forecastWeather3hours1beach from '@test/fixtures/forecast_weather_3_hours_1_beach.json';
 import stormglassWeather3hours from '@test/fixtures/stormglass_weather_3_hours.json';
 import nock from 'nock';
@@ -23,7 +23,7 @@ describe('Beach forecast functional tests', () => {
       lat: -33.792726,
       lng: 151.289824,
       name: 'Manly',
-      position: BeachPosition.E,
+      position: GeoPosition.E,
       user: user.id,
     });
   });
