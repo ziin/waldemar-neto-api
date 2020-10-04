@@ -120,4 +120,56 @@ describe('Users functional tests', () => {
       });
     });
   });
+
+  describe('When getting user profile data', () => {
+    beforeEach(async () => await User.deleteMany({}));
+    it('should get user data (/me) with success', async () => {
+      const newUser: User = {
+        name: 'Profile Test',
+        email: 'profile@mail.com',
+        password: 'pass123',
+      };
+
+      const user = await User.create(newUser);
+
+      const token = await AuthService.generateToken({
+        ...newUser,
+        id: user.id,
+      });
+
+      const { body, status } = await global.testRequest.get('/users/me').set({
+        'x-access-token': token,
+      });
+
+      expect(status).toBe(200);
+      expect(body).toMatchObject({ name: newUser.name, email: newUser.email });
+    });
+
+    it('should return: Not found when user was not found', async () => {
+      const newUser: User = {
+        name: 'Profile Test',
+        email: 'profile@mail.com',
+        password: 'pass123',
+      };
+
+      const user = await User.create(newUser);
+
+      const authResponse = await global.testRequest
+        .post('/users/authenticate')
+        .send({ email: newUser.email, password: newUser.password });
+
+      const token = authResponse.body.token;
+
+      await User.deleteOne({ _id: user.id });
+
+      const { body, status } = await global.testRequest.get('/users/me').set({
+        'x-access-token': token,
+      });
+
+      expect(status).toBe(404);
+      expect(body).toEqual(
+        expect.objectContaining({ code: 404, message: 'Not found' })
+      );
+    });
+  });
 });
